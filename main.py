@@ -1,48 +1,48 @@
-
-from flask import Flask, render_template, request, jsonify
-import numpy as np
-from tensorflow import keras
-import cv2
 import base64
+
+import cv2
+import numpy as np
+from flask import Flask, render_template, request
+from tensorflow import keras
 
 app = Flask(__name__)
 
 classes = ['character_10_yna',
- 'character_11_taamatar',
- 'character_12_thaa',
- 'character_13_daa',
- 'character_14_dhaa',
- 'character_15_adna',
- 'character_16_tabala',
- 'character_17_tha',
- 'character_18_da',
- 'character_19_dha',
- 'character_1_ka',
- 'character_20_na',
- 'character_21_pa',
- 'character_22_pha',
- 'character_23_ba',
- 'character_24_bha',
- 'character_25_ma',
- 'character_26_yaw',
- 'character_27_ra',
- 'character_28_la',
- 'character_29_waw',
- 'character_2_kha',
- 'character_30_motosaw',
- 'character_31_petchiryakha',
- 'character_32_patalosaw',
- 'character_33_ha',
- 'character_34_chhya',
- 'character_35_tra',
- 'character_36_gya',
- 'character_3_ga',
- 'character_4_gha',
- 'character_5_kna',
- 'character_6_cha',
- 'character_7_chha',
- 'character_8_ja',
- 'character_9_jha']
+           'character_11_taamatar',
+           'character_12_thaa',
+           'character_13_daa',
+           'character_14_dhaa',
+           'character_15_adna',
+           'character_16_tabala',
+           'character_17_tha',
+           'character_18_da',
+           'character_19_dha',
+           'character_1_ka',
+           'character_20_na',
+           'character_21_pa',
+           'character_22_pha',
+           'character_23_ba',
+           'character_24_bha',
+           'character_25_ma',
+           'character_26_yaw',
+           'character_27_ra',
+           'character_28_la',
+           'character_29_waw',
+           'character_2_kha',
+           'character_30_motosaw',
+           'character_31_petchiryakha',
+           'character_32_patalosaw',
+           'character_33_ha',
+           'character_34_chhya',
+           'character_35_tra',
+           'character_36_gya',
+           'character_3_ga',
+           'character_4_gha',
+           'character_5_kna',
+           'character_6_cha',
+           'character_7_chha',
+           'character_8_ja',
+           'character_9_jha']
 
 img_paths = [
     'static/yna.png',
@@ -83,7 +83,6 @@ img_paths = [
     'static/jha.png'
 ]
 
-
 model = keras.models.load_model('devnagari_model_final_final.h5')
 
 
@@ -111,7 +110,8 @@ def canvas():
         print(prediction)
 
         print(f"Prediction Result : {str(final)}")
-        return render_template('drawing.html', response=str(final), canvasdata=canvasdata,img_src=img_path, success=True)
+        return render_template('drawing.html', response=str(final), canvasdata=canvasdata, img_src=img_path,
+                               success=True)
     except Exception as e:
         return render_template('drawing.html', response=str(e), canvasdata=canvasdata, img_src=img_path)
 

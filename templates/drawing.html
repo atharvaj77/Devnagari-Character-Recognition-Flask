@@ -5,61 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Devanagari Character Recognizer</title>
     <style>
-        html{
-            background-color:#242582;
+        html {
+            background-color: #25274D;
         }
 
         .box {
             display: inline-block;
             width: 30%;
             margin: 100px;
-          }
+        }
 
-        #image{
+        #image {
             max-width: 300px;
             max-height: 300px;
+            filter: invert(28%) sepia(19%) saturate(883%) hue-rotate(198deg) brightness(90%) contrast(87%);
         }
 
-        #clear{
-            background-color: red;
+        #clear {
+            background-color: #AAABB8;
             color: white;
             font-size: 24px;
             padding: 20px;
         }
 
-        #send{
-            background-color: green;
+        #send {
+            background-color: #2E9CCA;
             color: white;
             font-size: 24px;
             padding: 20px;
         }
 
-        .heading{
+        .heading {
             padding-bottom: 20px;
             padding-top: 10px;
             padding-left: 10px;
         }
-
-
     </style>
 </head>
 <body>
-    <div style="background-color:#553D67;height:100%;width:100%">
+<div style="height:100%;width:100%">
     <nav class="navbar">
-        <div class="heading"><h1 style="font-family: arial;color:#F64C72;font-size:25px;">Devanagari Character Recognizer</h1></div>
+        <div class="heading"><h1 style="font-family: arial;color:#2E9CCA;font-size:25px;">Devanagari Character
+            Recognizer</h1></div>
     </nav>
-    </div>
+</div>
 
-    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+<hr style="height:2px;border-width:0;color:gray;background-color:#464866">
 
 
-    <div id = "container">
+<div id="container">
     <div id="canvas_block" class="box">
         <form action="/" method="POST" onsubmit="canvastoimage()">
             <div>
                 <div>
-                    <input type="hidden" id="canvasimg" name="canvasimg">
-                    <input type="hidden" id="canvasdata" name="canvasdata" value="{{ canvasdata }}">
+                    <input id="canvasimg" type="hidden" name="canvasimg">
+                    <input id="canvasdata" type="hidden" name="canvasdata" value="{{ canvasdata }}">
                     <canvas id="canvas" width="280" height="280"></canvas>
                 </div>
             </div>
@@ -72,87 +72,86 @@
             <div>
             </div>
         </form>
-</div>
+    </div>
 
-<div id="prediction_block" class="box">
-    {% if response %}
-        {% if success %}
-            <p style="color:#553D67;font-size:40px;">Prediction Result : {{ response }}</p>
-            <image src='{{img_src}}' id='image'></image>
-
-        {% else %}
-            <p>{{ response }}</p>
+    <div id="prediction_block" class="box">
+        {% if response %}
+            {% if success %}
+                <p style="color:#29648A;font-size:40px;">Prediction Result : {{ response }}</p>
+                <image src='{{ img_src }}' id='image'></image>
+            {% else %}
+                <p>{{ response }}</p>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
 </div>
-</div>
-    
-    <script>
-        window.addEventListener('load', ()=>{
+
+<script>
+    window.addEventListener('load', () => {
+        const canvas = document.querySelector('#canvas');
+        const context = canvas.getContext('2d');
+
+        const canvasdata = document.querySelector('#canvasdata').value;
+        if (canvasdata) {
+            const image = new Image();
+            image.onload = () => {
+                context.drawImage(image, 0, 0);
+            };
+            image.src = canvasdata;
+        } else {
+            context.fillStyle = "black";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        let radius = 10;
+        let start = 0;
+        let end = Math.PI * 2;
+        let dragging = false;
+
+        context.lineWidth = radius * 2;
+        context.lineCap = 'round';
+
+        const putPoint = (e) => {
+            if (dragging) {
+                context.fillStyle = "white";
+                context.strokeStyle = "white";
+                context.lineTo(e.offsetX, e.offsetY);
+                context.stroke();
+                context.beginPath();
+                context.arc(e.offsetX, e.offsetY, radius, start, end);
+                context.fill();
+                context.beginPath();
+                context.moveTo(e.offsetX, e.offsetY);
+            }
+        }
+
+        const engage = (e) => {
+            dragging = true;
+            putPoint(e);
+        }
+
+        const disengage = () => {
+            dragging = false;
+            context.beginPath();
+        }
+
+        canvas.addEventListener('mousedown', engage);
+        canvas.addEventListener('mousemove', putPoint);
+        canvas.addEventListener('mouseup', disengage);
+
+        const clear = document.querySelector('#clear');
+        clear.addEventListener('click', () => {
             const canvas = document.querySelector('#canvas');
             const context = canvas.getContext('2d');
-
-            const canvasdata = document.querySelector('#canvasdata').value;
-            if (canvasdata){
-                const image = new Image();
-                image.onload = ()=>{
-                    context.drawImage(image, 0, 0);
-                };
-                image.src = canvasdata;
-            } else {
-                context.fillStyle = "black";
-                context.fillRect(0, 0, canvas.width, canvas.height);
-            }
-
-            let radius = 10;
-            let start = 0;
-            let end = Math.PI * 2;
-            let dragging = false;
-
-            context.lineWidth = radius * 2;
-            context.lineCap = 'round';
-
-            const putPoint = (e)=>{
-                if (dragging){
-                    context.fillStyle = "white";
-                    context.strokeStyle = "white";
-                    context.lineTo(e.offsetX, e.offsetY);
-                    context.stroke();
-                    context.beginPath();
-                    context.arc(e.offsetX, e.offsetY, radius, start, end);
-                    context.fill();
-                    context.beginPath();
-                    context.moveTo(e.offsetX, e.offsetY);
-                }
-            }
-
-            const engage = (e)=>{
-                dragging = true;
-                putPoint(e);
-            }
-
-            const disengage = ()=>{
-                dragging = false;
-                context.beginPath();
-            }
-
-            canvas.addEventListener('mousedown', engage);
-            canvas.addEventListener('mousemove', putPoint);
-            canvas.addEventListener('mouseup', disengage);
-
-            const clear = document.querySelector('#clear');
-            clear.addEventListener('click', ()=>{
-                const canvas = document.querySelector('#canvas');
-                const context = canvas.getContext('2d');
-                context.filter = 'invert(0)';
-                context.fillStyle = "black";
-                context.fillRect(0, 0, canvas.width, canvas.height);
-            });
+            context.filter = 'invert(0)';
+            context.fillStyle = "black";
+            context.fillRect(0, 0, canvas.width, canvas.height);
         });
-        const canvastoimage = ()=>{
-            const canvas = document.querySelector('#canvas');
-            document.getElementById('canvasimg').value = canvas.toDataURL();
-        };
-    </script>
+    });
+    const canvastoimage = () => {
+        const canvas = document.querySelector('#canvas');
+        document.getElementById('canvasimg').value = canvas.toDataURL();
+    };
+</script>
 </body>
 </html>

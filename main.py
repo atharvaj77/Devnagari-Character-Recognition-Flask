@@ -2,7 +2,8 @@ import base64
 
 import cv2
 import numpy as np
-from flask import Flask, render_template, request
+from flask import Flask
+from flask import render_template, request
 from tensorflow import keras
 
 app = Flask(__name__)
@@ -88,17 +89,18 @@ model = keras.models.load_model('devnagari_model_final_final.h5')
 
 @app.route('/', methods=['GET'])
 def drawing():
-    return render_template('drawing.html')
+    return render_template('home.html')
 
 
 @app.route('/', methods=['POST'])
 def canvas():
     canvasdata = request.form['canvasimg']
     encoded_data = request.form['canvasimg'].split(',')[1]
+    # https://stackoverflow.com/questions/3470546/how-do-you-decode-base64-data-in-python
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray_image = cv2.resize(gray_image, (32, 32), interpolation=cv2.INTER_LINEAR)
+    gray_image = cv2.resize(gray_image, (32, 32))
     img = np.expand_dims(gray_image, axis=0)
 
     try:
@@ -110,11 +112,11 @@ def canvas():
         print(prediction)
 
         print(f"Prediction Result : {str(final)}")
-        return render_template('drawing.html', response=str(final), canvasdata=canvasdata, img_src=img_path,
+        return render_template('home.html', response=str(final), canvasdata=canvasdata, img_src=img_path,
                                success=True)
     except Exception as e:
-        return render_template('drawing.html', response=str(e), canvasdata=canvasdata, img_src=img_path)
+        return render_template('home.html', response=str(e), canvasdata=canvasdata, img_src=img_path)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

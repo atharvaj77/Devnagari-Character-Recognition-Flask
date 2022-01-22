@@ -87,18 +87,27 @@
 </div>
 
 <script>
+    // Reference: https://www.w3schools.com/graphics/canvas_drawing.asp
+    // https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
+
+    // Function is called on canvas being loaded
     window.addEventListener('load', () => {
         const canvas = document.querySelector('#canvas');
         const context = canvas.getContext('2d');
 
         const canvasdata = document.querySelector('#canvasdata').value;
+
+        // if the canvas has value preloaded it'll draw the same
         if (canvasdata) {
             const image = new Image();
             image.onload = () => {
                 context.drawImage(image, 0, 0);
             };
             image.src = canvasdata;
-        } else {
+        }
+
+        // else canvas will be filled with black
+        else {
             context.fillStyle = "black";
             context.fillRect(0, 0, canvas.width, canvas.height);
         }
@@ -111,6 +120,7 @@
         context.lineWidth = radius * 2;
         context.lineCap = 'round';
 
+        // logic for putting a white point using stroke and filling the path
         const putPoint = (e) => {
             if (dragging) {
                 context.fillStyle = "white";
@@ -135,10 +145,13 @@
             context.beginPath();
         }
 
+        // Conditions for calling the above defined functions
         canvas.addEventListener('mousedown', engage);
         canvas.addEventListener('mousemove', putPoint);
         canvas.addEventListener('mouseup', disengage);
 
+
+        // If clear button is pressed invert filter is used and the entire canvas is filled with black
         const clear = document.querySelector('#clear');
         clear.addEventListener('click', () => {
             const canvas = document.querySelector('#canvas');
@@ -148,6 +161,8 @@
             context.fillRect(0, 0, canvas.width, canvas.height);
         });
     });
+
+    // Function called to submit canvas data
     const canvastoimage = () => {
         const canvas = document.querySelector('#canvas');
         document.getElementById('canvasimg').value = canvas.toDataURL();

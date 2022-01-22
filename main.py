@@ -6,6 +6,7 @@ from flask import Flask
 from flask import render_template, request
 from tensorflow import keras
 
+# Creating Flask instance
 app = Flask(__name__)
 
 classes = ['character_10_yna',
@@ -84,19 +85,22 @@ img_paths = [
     'static/jha.png'
 ]
 
+# Loading the pretrained keras model
 model = keras.models.load_model('devnagari_model_final_final.h5')
 
 
+# Loading the home page
 @app.route('/', methods=['GET'])
-def drawing():
+def home():
     return render_template('home.html')
 
 
+# Loading the predict page
 @app.route('/', methods=['POST'])
-def canvas():
+def predict():
     canvasdata = request.form['canvasimg']
     encoded_data = request.form['canvasimg'].split(',')[1]
-    # https://stackoverflow.com/questions/3470546/how-do-you-decode-base64-data-in-python
+    # Ref: https://stackoverflow.com/questions/3470546/how-do-you-decode-base64-data-in-python
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

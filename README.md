@@ -3,8 +3,8 @@
 This project is a Convolutional Neural Network(CNN) based model which is trained on Devanagari Handwritten Character Dataset Data Set on UCI. [Link of the dataset](https://archive.ics.uci.edu/ml/datasets/Devanagari+Handwritten+Character+Dataset)
 
 This project currently supports 36 classes as given below:
-'''
-classes = ['character_10_yna',
+
+`classes = ['character_10_yna',
            'character_11_taamatar',
            'character_12_thaa',
            'character_13_daa',
@@ -40,6 +40,6 @@ classes = ['character_10_yna',
            'character_7_chha',
            'character_8_ja',
            'character_9_jha']
-'''
+`
 
 To check it out go to: [https://devnagari-char-recognition.herokuapp.com/](https://devnagari-char-recognition.herokuapp.com/)
